@@ -1,5 +1,5 @@
 import styles from './track.module.css';
-import { getDoc } from '@/lib/googleSheets';
+import { prisma } from '@/lib/prisma';
 import { Search } from 'lucide-react';
 
 export default async function TrackPage({
@@ -15,18 +15,16 @@ export default async function TrackPage({
 
   if (orderId) {
     try {
-      const doc = await getDoc();
-      const sheet = doc.sheetsByIndex[0];
-      const rows = await sheet.getRows();
+      const order = await prisma.order.findUnique({
+        where: { id: orderId }
+      });
       
-      const row = rows.find(r => r.get('Order ID') === orderId);
-      
-      if (row) {
+      if (order) {
         orderData = {
-          id: row.get('Order ID'),
-          type: row.get('Project Type'),
-          status: row.get('Status'),
-          date: row.get('Date Submitted')
+          id: order.id,
+          type: order.projectType,
+          status: order.status,
+          date: order.dateSubmitted.toISOString().split('T')[0]
         };
       }
     } catch (error) {

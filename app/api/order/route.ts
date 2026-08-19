@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { getDoc } from '@/lib/googleSheets';
 import cloudinary from '@/lib/cloudinary';
+import { prisma } from '@/lib/prisma';
 
 export async function POST(request: Request) {
   try {
@@ -41,36 +41,24 @@ export async function POST(request: Request) {
     // Generate Order ID
     const orderId = `CA-${Math.floor(1000 + Math.random() * 9000)}`; // e.g. CA-4592
     
-    // Append to Google Sheets
-    // Note: This assumes the sheet is the first worksheet (index 0) 
-    // and headers are exactly matching these keys on row 1:
-    // Order ID, Name, Phone, City, Project Type, Description, Colors, Size, Reference Image URL, Budget, Needed By, Status, Payment Status, Date Submitted
-    
-    try {
-      const doc = await getDoc();
-      const sheet = doc.sheetsByIndex[0]; // first worksheet
-      
-      await sheet.addRow({
-        'Order ID': orderId,
-        'Name': name,
-        'Phone': phone,
-        'City': city,
-        'Project Type': projectType,
-        'Description': description,
-        'Colors': colors || 'N/A',
-        'Size': size || 'N/A',
-        'Reference Image URL': imageUrl || 'No image',
-        'Budget': budget || 'N/A',
-        'Needed By': neededBy || 'N/A',
-        'Status': 'Pending',
-        'Payment Status': 'Unpaid',
-        'Date Submitted': new Date().toISOString().split('T')[0] // YYYY-MM-DD
-      });
-    } catch (sheetError) {
-      console.error("Google Sheets Error:", sheetError);
-      // We don't fail here if the user hasn't set up the sheet yet for local testing
-      // but in production we should. We'll return the ID anyway to let the UI proceed.
-    }
+    // Insert into Postgres Database using Prisma
+    await prisma.order.create({
+      data: {
+        id: orderId,
+        name,
+        phone,
+        city,
+        projectType,
+        description,
+        colors: colors || null,
+        size: size || null,
+        imageUrl: imageUrl || null,
+        budget: budget || null,
+        neededBy: neededBy || null,
+        status: 'Pending',
+        paymentStatus: 'Unpaid',
+      }
+    });
     
     return NextResponse.json({ success: true, orderId });
   } catch (error) {

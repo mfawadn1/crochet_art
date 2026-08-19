@@ -1,0 +1,26 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_PRISMA_URL")
+  directUrl = env("POSTGRES_URL_NON_POOLING")
+}
+
+model Order {
+  id            String   @id // e.g. "CA-1234"
+  name          String
+  phone         String
+  city          String
+  projectType   String
+  description   String
+  colors        String?
+  size          String?
+  imageUrl      String?
+  budget        String?
+  neededBy      String?
+  status        String   @default("Pending")
+  paymentStatus String   @default("Unpaid")
+  dateSubmitted DateTime @default(now())
+}

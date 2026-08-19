@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { cookies } from 'next/headers';
 import { jwtVerify } from 'jose';
-import { getDoc } from '@/lib/googleSheets';
+import { prisma } from '@/lib/prisma';
 
 const JWT_SECRET = new TextEncoder().encode(process.env.ADMIN_PASSWORD || 'default_secret');
 
@@ -22,25 +22,24 @@ export async function POST(request: Request) {
     }
 
     // 2. Parse Request
-    const { rowIndex, field, value } = await request.json();
+    const { orderId, field, value } = await request.json();
 
-    if (!rowIndex || !field || !value) {
+    if (!orderId || !field || !value) {
       return NextResponse.json({ success: false, error: 'Missing parameters' }, { status: 400 });
     }
 
-    // 3. Update Google Sheets
-    const doc = await getDoc();
-    const sheet = doc.sheetsByIndex[0];
-    
-    const rows = await sheet.getRows();
-    const targetRow = rows[rowIndex - 2]; // Subtract 2 because row index is 1-based and header is row 1
-
-    if (!targetRow) {
-      return NextResponse.json({ success: false, error: 'Row not found' }, { status: 404 });
+    // 3. Update Database via Prisma
+    const dataToUpdate: any = {};
+    if (field === 'Status') {
+      dataToUpdate.status = value;
+    } else if (field === 'Payment Status') {
+      dataToUpdate.paymentStatus = value;
     }
 
-    targetRow.set(field, value);
-    await targetRow.save();
+    await prisma.order.update({
+      where: { id: orderId },
+      data: dataToUpdate,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

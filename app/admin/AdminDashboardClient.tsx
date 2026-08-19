@@ -11,25 +11,25 @@ export default function AdminDashboardClient({ initialOrders }: { initialOrders:
   const [updating, setUpdating] = useState(false);
   const router = useRouter();
 
-  const handleUpdateStatus = async (rowIndex: number, field: string, value: string) => {
+  const handleUpdateStatus = async (orderId: string, field: string, value: string) => {
     setUpdating(true);
     try {
       const res = await fetch('/api/admin/update', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ rowIndex, field, value }),
+        body: JSON.stringify({ orderId, field, value }),
       });
 
       if (res.ok) {
         // Update local state
         const updatedOrders = orders.map(o => {
-          if (o.rowIndex === rowIndex) {
+          if (o.id === orderId) {
             return { ...o, [field === 'Status' ? 'status' : 'paymentStatus']: value };
           }
           return o;
         });
         setOrders(updatedOrders);
-        if (selectedOrder?.rowIndex === rowIndex) {
+        if (selectedOrder?.id === orderId) {
           setSelectedOrder({ ...selectedOrder, [field === 'Status' ? 'status' : 'paymentStatus']: value });
         }
         alert('Updated successfully');
@@ -123,7 +123,7 @@ export default function AdminDashboardClient({ initialOrders }: { initialOrders:
                 <label>Order Status:</label>
                 <select 
                   value={selectedOrder.status}
-                  onChange={(e) => handleUpdateStatus(selectedOrder.rowIndex, 'Status', e.target.value)}
+                  onChange={(e) => handleUpdateStatus(selectedOrder.id, 'Status', e.target.value)}
                   disabled={updating}
                   className={styles.statusSelect}
                 >
@@ -140,7 +140,7 @@ export default function AdminDashboardClient({ initialOrders }: { initialOrders:
                 <label>Payment Status:</label>
                 <select 
                   value={selectedOrder.paymentStatus}
-                  onChange={(e) => handleUpdateStatus(selectedOrder.rowIndex, 'Payment Status', e.target.value)}
+                  onChange={(e) => handleUpdateStatus(selectedOrder.id, 'Payment Status', e.target.value)}
                   disabled={updating}
                   className={styles.paymentSelect}
                 >
@@ -172,7 +172,7 @@ export default function AdminDashboardClient({ initialOrders }: { initialOrders:
                     </tr>
                   ) : (
                     filteredOrders.map(order => (
-                      <tr key={order.rowIndex}>
+                      <tr key={order.id}>
                         <td><strong>{order.id}</strong></td>
                         <td>{order.date}</td>
                         <td>{order.name}</td>

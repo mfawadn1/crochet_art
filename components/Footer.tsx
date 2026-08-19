@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { FaInstagram, FaFacebook, FaWhatsapp } from 'react-icons/fa';
+import { FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import styles from './Footer.module.css';
 
 export default function Footer() {
@@ -25,9 +25,9 @@ export default function Footer() {
           <h3 className={styles.heading}>Connect with us</h3>
           <div className={styles.socialIcons}>
             {/* Replace '#' with actual links later */}
-            <a href="#" aria-label="Instagram" className={styles.iconLink}><FaInstagram size={24} /></a>
-            <a href="#" aria-label="Facebook" className={styles.iconLink}><FaFacebook size={24} /></a>
-            <a href="#" aria-label="WhatsApp" className={styles.iconLink}><FaWhatsapp size={24} /></a>
+            <a href="https://www.instagram.com/crochet_art902" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className={styles.iconLink}><FaInstagram size={24} /></a>
+            <a href="https://www.tiktok.com/@crochetart902?_r=1&_t=ZS-9915oaxjTBl" target="_blank" rel="noopener noreferrer" aria-label="TikTok" className={styles.iconLink}><FaTiktok size={24} /></a>
+            <a href={`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER?.replace(/[^0-9]/g, '') || ''}`} target="_blank" rel="noopener noreferrer" aria-label="WhatsApp" className={styles.iconLink}><FaWhatsapp size={24} /></a>
           </div>
         </div>
       </div>

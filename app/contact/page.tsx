@@ -1,5 +1,5 @@
 import styles from './contact.module.css';
-import { FaWhatsapp, FaInstagram, FaFacebook } from 'react-icons/fa';
+import { FaWhatsapp, FaInstagram, FaTiktok } from 'react-icons/fa';
 import Link from 'next/link';
 
 export default function ContactPage() {
@@ -34,13 +34,13 @@ export default function ContactPage() {
               Check out our latest creations, behind-the-scenes content, and special announcements on our social media pages.
             </p>
             <div className={styles.socialLinks}>
-              <a href="#" className={styles.socialLink}>
+              <a href="https://www.instagram.com/crochet_art902" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
                 <FaInstagram size={28} />
                 <span>Instagram</span>
               </a>
-              <a href="#" className={styles.socialLink}>
-                <FaFacebook size={28} />
-                <span>Facebook</span>
+              <a href="https://www.tiktok.com/@crochetart902?_r=1&_t=ZS-9915oaxjTBl" target="_blank" rel="noopener noreferrer" className={styles.socialLink}>
+                <FaTiktok size={28} />
+                <span>TikTok</span>
               </a>
             </div>
           </div>

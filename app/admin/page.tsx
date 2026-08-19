@@ -34,6 +34,11 @@ export default async function AdminPage() {
   try {
     const rawOrders = await prisma.order.findMany({
       orderBy: { dateSubmitted: 'desc' },
+      include: {
+        user: {
+          select: { email: true, image: true }
+        }
+      }
     });
     
     // Map to client format
@@ -52,6 +57,8 @@ export default async function AdminPage() {
       status: row.status,
       paymentStatus: row.paymentStatus,
       date: row.dateSubmitted.toISOString().split('T')[0],
+      userEmail: row.user?.email,
+      userImage: row.user?.image,
     }));
   } catch (error) {
     console.error("Error fetching orders:", error);

@@ -1,13 +1,15 @@
 'use client';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, User } from 'lucide-react';
 import { useState } from 'react';
+import { useSession, signIn, signOut } from 'next-auth/react';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
+  const { data: session, status } = useSession();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -34,6 +36,22 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          {status === 'authenticated' && session.user ? (
+            <div className={styles.userMenu}>
+              <Link href="/dashboard" className={styles.navLink}>
+                Dashboard
+              </Link>
+              {session.user.image ? (
+                <img src={session.user.image} alt="User" className={styles.userAvatar} onClick={() => signOut()} title="Logout" />
+              ) : (
+                <button onClick={() => signOut()} className={styles.logoutTextBtn}>Logout</button>
+              )}
+            </div>
+          ) : (
+            <button onClick={() => signIn('google')} className={styles.loginBtn}>
+              Login
+            </button>
+          )}
           <Link href="/order" className={styles.ctaButton}>
             Custom Order
           </Link>
@@ -62,6 +80,20 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          {status === 'authenticated' && session.user ? (
+            <>
+              <Link href="/dashboard" className={styles.mobileNavLink} onClick={() => setIsOpen(false)}>
+                Dashboard
+              </Link>
+              <button onClick={() => { signOut(); setIsOpen(false); }} className={styles.mobileNavLink} style={{textAlign: 'left'}}>
+                Logout
+              </button>
+            </>
+          ) : (
+            <button onClick={() => { signIn('google'); setIsOpen(false); }} className={styles.mobileNavLink} style={{textAlign: 'left'}}>
+              Login
+            </button>
+          )}
           <Link 
             href="/order" 
             className={styles.mobileCtaButton}

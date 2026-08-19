@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import cloudinary from '@/lib/cloudinary';
 import { prisma } from '@/lib/prisma';
+import { getServerSession } from "next-auth/next";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: Request) {
   try {
@@ -41,6 +43,10 @@ export async function POST(request: Request) {
     // Generate Order ID
     const orderId = `CA-${Math.floor(1000 + Math.random() * 9000)}`; // e.g. CA-4592
     
+    // Check if user is logged in
+    const session = await getServerSession(authOptions);
+    const userId = session?.user ? (session.user as any).id : null;
+    
     // Insert into Postgres Database using Prisma
     await prisma.order.create({
       data: {
@@ -57,6 +63,7 @@ export async function POST(request: Request) {
         neededBy: neededBy || null,
         status: 'Pending',
         paymentStatus: 'Unpaid',
+        userId: userId,
       }
     });
     

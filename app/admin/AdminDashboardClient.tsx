@@ -91,6 +91,7 @@ export default function AdminDashboardClient({ initialOrders }: { initialOrders:
                 <p><strong>Name:</strong> {selectedOrder.name}</p>
                 <p><strong>Phone:</strong> {selectedOrder.phone}</p>
                 <p><strong>City:</strong> {selectedOrder.city}</p>
+                {selectedOrder.userEmail && <p><strong>Email (Account):</strong> {selectedOrder.userEmail}</p>}
               </div>
               <div>
                 <h3>Project Request</h3>

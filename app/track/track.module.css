@@ -1,0 +1,181 @@
+.trackContainer {
+  padding: 6rem 0;
+  background-color: var(--background);
+  min-height: 80vh;
+}
+
+.title {
+  text-align: center;
+  font-size: 3rem;
+  margin-bottom: 3rem;
+  position: relative;
+  display: inline-block;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.title::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary);
+  border-radius: 2px;
+}
+
+.searchCard {
+  max-width: 600px;
+  margin: 0 auto;
+  background-color: var(--input); /* white */
+  padding: 3rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.searchForm {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+@media (min-width: 500px) {
+  .searchForm {
+    flex-direction: row;
+  }
+}
+
+.searchInput {
+  flex-grow: 1;
+  padding: 1rem 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  font-size: 1.125rem;
+  font-family: inherit;
+  transition: border-color 0.2s ease;
+  background-color: #FAFAFA;
+}
+
+.searchInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  background-color: white;
+}
+
+.searchButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background-color: var(--primary);
+  color: var(--primary-foreground);
+  padding: 1rem 2rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 14px rgba(193, 102, 59, 0.4);
+}
+
+.searchButton:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(193, 102, 59, 0.6);
+  color: white;
+}
+
+.resultsContainer {
+  max-width: 600px;
+  margin: 3rem auto 0;
+}
+
+.statusCard {
+  background-color: var(--input);
+  padding: 3rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  border-top: 5px solid var(--primary);
+}
+
+.statusHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.statusHeader h2 {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+.dateText {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.projectType {
+  font-size: 1.125rem;
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.statusDisplay {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.statusLabel {
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #666;
+  font-weight: 600;
+}
+
+.statusBadge {
+  background-color: var(--secondary);
+  color: var(--foreground);
+  padding: 0.75rem 2rem;
+  border-radius: 2rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.statusExplanation {
+  text-align: center;
+  background-color: var(--background);
+  padding: 1.5rem;
+  border-radius: var(--radius);
+  font-size: 1rem;
+  color: var(--foreground);
+}
+
+.errorBox, .notFoundBox {
+  background-color: var(--input);
+  padding: 3rem;
+  border-radius: var(--radius);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  text-align: center;
+  border-top: 5px solid #d32f2f;
+}
+
+.notFoundBox h3 {
+  color: #d32f2f;
+  margin-bottom: 1rem;
+}
+
+.notFoundBox p {
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}

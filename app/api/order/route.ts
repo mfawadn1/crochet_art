@@ -40,34 +40,70 @@ export async function POST(request: Request) {
       });
     }
     
-    // Generate Order ID
-    const orderId = `CA-${Math.floor(1000 + Math.random() * 9000)}`; // e.g. CA-4592
+    // Generate Sequential Order ID safely
+    const startOfDay = new Date();
+    startOfDay.setHours(0, 0, 0, 0);
+    const endOfDay = new Date();
+    endOfDay.setHours(23, 59, 59, 999);
+    const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, ''); // YYMMDD
     
     // Check if user is logged in
     const session = await getServerSession(authOptions);
     const userId = session?.user ? (session.user as any).id : null;
-    
-    // Insert into Postgres Database using Prisma
-    await prisma.order.create({
-      data: {
-        id: orderId,
-        name,
-        phone,
-        city,
-        projectType,
-        description,
-        colors: colors || null,
-        size: size || null,
-        imageUrl: imageUrl || null,
-        budget: budget || null,
-        neededBy: neededBy || null,
-        status: 'Pending',
-        paymentStatus: 'Unpaid',
-        userId: userId,
+
+    let orderCreated = false;
+    let attempts = 0;
+    let finalOrderId = '';
+
+    while (!orderCreated && attempts < 5) {
+      try {
+        const todaysOrdersCount = await prisma.order.count({
+          where: {
+            dateSubmitted: {
+              gte: startOfDay,
+              lte: endOfDay
+            }
+          }
+        });
+        
+        // e.g. 001, 002
+        const sequence = (todaysOrdersCount + 1 + attempts).toString().padStart(3, '0');
+        finalOrderId = `CA-${dateStr}-${sequence}`;
+
+        // Insert into Postgres Database using Prisma
+        await prisma.order.create({
+          data: {
+            id: finalOrderId,
+            name,
+            phone,
+            city,
+            projectType,
+            description,
+            colors: colors || null,
+            size: size || null,
+            imageUrl: imageUrl || null,
+            budget: budget || null,
+            neededBy: neededBy || null,
+            status: 'Pending',
+            paymentStatus: 'Unpaid',
+            userId: userId,
+          }
+        });
+        
+        orderCreated = true;
+      } catch (err: any) {
+        if (err.code === 'P2002') {
+          // Unique constraint failed, someone else grabbed this ID. Retry.
+          attempts++;
+        } else {
+          throw err;
+        }
       }
-    });
+    }
+
+    if (!orderCreated) throw new Error("Failed to generate unique Order ID after 5 attempts");
     
-    return NextResponse.json({ success: true, orderId });
+    return NextResponse.json({ success: true, orderId: finalOrderId });
   } catch (error) {
     console.error('Order submission error:', error);
     return NextResponse.json({ success: false, error: 'Failed to process order' }, { status: 500 });

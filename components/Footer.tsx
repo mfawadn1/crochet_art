@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { FaInstagram, FaTiktok, FaWhatsapp } from 'react-icons/fa';
 import styles from './Footer.module.css';
 
@@ -7,8 +8,8 @@ export default function Footer() {
     <footer className={styles.footer}>
       <div className={`container ${styles.footerContainer}`}>
         <div className={styles.brandSection}>
-          <h2 className={styles.logo}>Corchet Art</h2>
-          <p className={styles.tagline}>Handmade with love, delivering across Pakistan.</p>
+          <Image src="/logo.png" alt="Crochet Art" width={150} height={50} style={{ objectFit: 'contain' }} />
+          <p className={styles.tagline} style={{ marginTop: '0.5rem' }}>Handmade with love, delivering across Pakistan.</p>
         </div>
 
         <div className={styles.linksSection}>

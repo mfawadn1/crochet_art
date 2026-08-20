@@ -34,6 +34,8 @@ export async function POST(request: Request) {
       dataToUpdate.status = value;
     } else if (field === 'Payment Status') {
       dataToUpdate.paymentStatus = value;
+    } else if (field === 'Admin Notes') {
+      dataToUpdate.adminNotes = value;
     }
 
     await prisma.order.update({

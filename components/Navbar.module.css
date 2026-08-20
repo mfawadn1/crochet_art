@@ -134,3 +134,49 @@
 .loginBtn:hover, .logoutTextBtn:hover {
   color: var(--primary);
 }
+
+/* User Dropdown */
+.userMenuContainer {
+  position: relative;
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  margin-top: 0.5rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  min-width: 150px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  border: 1px solid #eee;
+}
+
+.dropdownItem {
+  padding: 0.75rem 1rem;
+  color: var(--text-dark);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background 0.2s;
+  display: block;
+  text-align: left;
+  border: none;
+  background: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.dropdownItem:hover {
+  background: #f9f9f9;
+  color: var(--primary);
+}
+
+.dropdownDivider {
+  height: 1px;
+  background: #eee;
+  margin: 0;
+}

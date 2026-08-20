@@ -1,18 +1,23 @@
 'use client';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Menu, X, User } from 'lucide-react';
+import { Menu, X, User, ShoppingCart } from 'lucide-react';
 import { useState } from 'react';
 import { useSession, signIn, signOut } from 'next-auth/react';
+import { useCart } from './CartContext';
 import styles from './Navbar.module.css';
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
   const pathname = usePathname();
   const { data: session, status } = useSession();
+  const { cartCount } = useCart();
 
   const navLinks = [
     { name: 'Home', path: '/' },
+    { name: 'Shop', path: '/shop' },
     { name: 'Gallery', path: '/gallery' },
     { name: 'About', path: '/about' },
     { name: 'Track Order', path: '/track' },
@@ -22,7 +27,7 @@ export default function Navbar() {
     <header className={styles.header}>
       <div className={`container ${styles.navContainer}`}>
         <Link href="/" className={styles.logo}>
-          Corchet Art
+          <Image src="/logo.png" alt="Crochet Art" width={150} height={50} style={{ objectFit: 'contain' }} />
         </Link>
 
         {/* Desktop Nav */}
@@ -36,15 +41,45 @@ export default function Navbar() {
               {link.name}
             </Link>
           ))}
+          
+          <Link href="/cart" style={{ position: 'relative', display: 'flex', alignItems: 'center', color: 'var(--text-dark)' }}>
+            <ShoppingCart size={24} />
+            {cartCount > 0 && (
+              <span style={{ position: 'absolute', top: -8, right: -8, background: 'var(--primary)', color: 'white', borderRadius: '50%', width: 20, height: 20, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.75rem', fontWeight: 'bold' }}>
+                {cartCount}
+              </span>
+            )}
+          </Link>
+
           {status === 'authenticated' && session.user ? (
-            <div className={styles.userMenu}>
-              <Link href="/dashboard" className={styles.navLink}>
-                Dashboard
-              </Link>
-              {session.user.image ? (
-                <img src={session.user.image} alt="User" className={styles.userAvatar} onClick={() => signOut()} title="Logout" />
-              ) : (
-                <button onClick={() => signOut()} className={styles.logoutTextBtn}>Logout</button>
+            <div className={styles.userMenuContainer}>
+              <div 
+                className={styles.userAvatarContainer} 
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}
+              >
+                {session.user.image ? (
+                  <img src={session.user.image} alt="User" className={styles.userAvatar} />
+                ) : (
+                  <div style={{width: 36, height: 36, borderRadius: '50%', background: 'var(--primary)', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold'}}>
+                    {session.user.name?.charAt(0) || 'U'}
+                  </div>
+                )}
+                <span style={{ fontSize: '0.9rem', fontWeight: 500, color: 'var(--text-dark)' }}>
+                  {session.user.name?.split(' ')[0]}
+                </span>
+              </div>
+              
+              {dropdownOpen && (
+                <div className={styles.dropdownMenu}>
+                  <Link href="/dashboard" className={styles.dropdownItem} onClick={() => setDropdownOpen(false)}>
+                    My Dashboard
+                  </Link>
+                  <hr className={styles.dropdownDivider} />
+                  <button onClick={() => { signOut(); setDropdownOpen(false); }} className={styles.dropdownItem}>
+                    Logout
+                  </button>
+                </div>
               )}
             </div>
           ) : (

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SessionProviderWrapper from "@/components/SessionProviderWrapper";
+import { CartProvider } from "@/components/CartContext";
 
 const inter = Inter({ subsets: ["latin"], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: '--font-playfair' });
@@ -22,11 +23,13 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
       <body>
         <SessionProviderWrapper>
-          <Navbar />
-          <main style={{ minHeight: 'calc(100vh - 140px)' }}>
-            {children}
-          </main>
-          <Footer />
+          <CartProvider>
+            <Navbar />
+            <main style={{ minHeight: 'calc(100vh - 140px)' }}>
+              {children}
+            </main>
+            <Footer />
+          </CartProvider>
         </SessionProviderWrapper>
       </body>
     </html>

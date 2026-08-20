@@ -37,6 +37,11 @@ export default async function AdminPage() {
       include: {
         user: {
           select: { email: true, image: true }
+        },
+        items: {
+          include: {
+            product: true
+          }
         }
       }
     });
@@ -59,10 +64,28 @@ export default async function AdminPage() {
       date: row.dateSubmitted.toISOString().split('T')[0],
       userEmail: row.user?.email,
       userImage: row.user?.image,
+      orderType: row.orderType,
+      totalAmount: row.totalAmount,
+      adminNotes: row.adminNotes || '',
+      items: row.items.map((item: any) => ({
+        id: item.id,
+        quantity: item.quantity,
+        priceAtBuy: item.priceAtBuy,
+        title: item.product.title,
+      })),
     }));
   } catch (error) {
     console.error("Error fetching orders:", error);
     // Continue with empty orders if error
+  }
+
+  let products: any[] = [];
+  try {
+    products = await prisma.product.findMany({
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error("Error fetching products:", error);
   }
 
   return (
@@ -70,8 +93,8 @@ export default async function AdminPage() {
       <div className="container">
         <h1 style={{ color: 'var(--primary)', marginBottom: '2rem' }}>Admin Dashboard</h1>
         
-        {/* Pass data to Client Component for interactivity (filtering, updating status) */}
-        <AdminDashboardClient initialOrders={orders} />
+        {/* Pass data to Client Component for interactivity */}
+        <AdminDashboardClient initialOrders={orders} initialProducts={products} />
       </div>
     </div>
   );

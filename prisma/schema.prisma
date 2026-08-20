@@ -13,8 +13,13 @@ model Order {
   name          String
   phone         String
   city          String
-  projectType   String
-  description   String
+  // E-commerce Fields
+  orderType     String   @default("Custom") // "Custom" or "Standard"
+  totalAmount   Float?
+  
+  // Custom Request Fields (Made optional for standard orders)
+  projectType   String?
+  description   String?
   colors        String?
   size          String?
   imageUrl      String?
@@ -23,10 +28,52 @@ model Order {
   status        String   @default("Pending")
   paymentStatus String   @default("Unpaid")
   dateSubmitted DateTime @default(now())
+  adminNotes    String?
   
   // Relation to User (optional because guests can order)
   userId        String?
   user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  
+  // Standard Items
+  items         OrderItem[]
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  imageUrl    String
+  category    String   @default("Amigurumi")
+  inStock     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  
+  orderItems  OrderItem[]
+  reviews     Review[]
+}
+
+model OrderItem {
+  id        String   @id @default(cuid())
+  orderId   String
+  productId String
+  quantity  Int      @default(1)
+  priceAtBuy Float
+  
+  order     Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Restrict)
+}
+
+model Review {
+  id        String   @id @default(cuid())
+  rating    Int
+  comment   String?  @db.Text
+  createdAt DateTime @default(now())
+  
+  productId String
+  userId    String
+  
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 // NextAuth Required Models
@@ -66,6 +113,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   orders        Order[]
+  reviews       Review[]
 }
 
 model VerificationToken {
